@@ -8,6 +8,10 @@ import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
+import { Menu, MenuItem, TextField } from '@mui/material';
+import { useState } from 'react';
+
+import { Autocomplete } from '@mui/material'
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -58,6 +62,12 @@ export default function SearchAppBar() {
         navigate('/')
     }
 
+    function onSearchInput(e) {
+        // console.log(e)
+        console.log(e.target.value)
+        // setAvatarMenu(e.target)
+    }
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -80,7 +90,7 @@ export default function SearchAppBar() {
                     >
                         MUI
                     </Typography>
-                    <Search>
+                    <Search onInput={(e) => onSearchInput(e)}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>

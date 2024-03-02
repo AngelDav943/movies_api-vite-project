@@ -1,9 +1,26 @@
-.moviedetails .backdrop {
+.moviedetails {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    padding: 2rem;
     min-height: 500px;
+}
+
+.moviedetails .backdrop {
+    min-height: 90dvh;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.moviedetails .poster {
+    max-height: 400px;
+    height: 100dvw;
+    margin: 2rem;
+}
+
+.moviedetails .information {
+    max-width: 700px;
+    flex-grow: 1;
+    flex-basis: 450px
 }
 
 .moviedetails .span {

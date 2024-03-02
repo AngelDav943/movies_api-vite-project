@@ -30,44 +30,45 @@ export default function () {
         fetchMovie()
     }, [])
 
+    function clickWatch() {
+        window.location.href = movie.homepage
+    }
+
     //https://image.tmdb.org/t/p/w500/
 
     return movie ? (
-        <Stack className="moviedetails">
-            <Stack direction='row' className="backdrop" justifyContent="space-between" sx={{ background: `linear-gradient(transparent, #303030), url('https://image.tmdb.org/t/p/w500${movie.backdrop_path}')` }}>
-                <Stack alignItems='flex-start' justifyContent='center'>
-                    <Typography variant="h1">{movie.title}</Typography>
+        <Stack className="moviedetails" sx={{ backgroundImage: `linear-gradient(transparent, #303030), url('https://image.tmdb.org/t/p/w500${movie.backdrop_path}')` }}>
+            <Stack direction='row' className="backdrop" justifyContent="center" alignItems="center" flexWrap="wrap">
+                <img
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt="Poster"
+                    className="poster"
+                    title={movie.title}
+                />
+                <Stack className="information" alignItems='flex-start' justifyContent='center'>
+                    <Typography variant="h1" sx={{fontWeight:600}}>{movie.title}</Typography>
                     <br />
                     <Stack className="genres" alignItems='flex-start' direction='row'>
                         {movie.genres.map((genre, index) => {
-                            return <Typography className="span genre">{genre.name}</Typography>
+                            return <Typography key={index} className="span genre">{genre.name}</Typography>
                         })}
                     </Stack>
                     <br />
                     <Typography>{movie.overview}</Typography>
-                    <Button variant="contained" size="large">Watch</Button>
+                    <br />
+                    <Button variant="contained" size="large" onClick={() => clickWatch()}>Watch</Button>
                 </Stack>
-                {/* <Stack className="companies" alignItems='flex-start' direction='row'>
-                    {movie.production_companies.map((company, index) => {
-                        return company.logo_path ? <img
-                        component="img"
-                        src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
-                        alt="Poster"
-                        title={company.name}
-                        /> : <Typography>{company.name}</Typography>
-                    })}
-                </Stack> */}
             </Stack>
-            <Stack className="genres" alignItems='stretch' direction='row'>
+            {/* <Stack className="languages" alignItems='stretch' direction='row'>
                 {movie.spoken_languages.map((language, index) => {
                     return <Typography className="span">{language.name}</Typography>
                 })}
-            </Stack>
-            <Stack direction='row' overflow='clip'>
+            </Stack> */}
+            {/* <Stack direction='row' overflow='clip'> */}
 
-                {/* <Typography>{movie.title}</Typography> */}
-                {JSON.stringify(movie)}
-            </Stack>
+            {/* <Typography>{movie.title}</Typography> */}
+            {/* {JSON.stringify(movie)} */}
+            {/* </Stack> */}
         </Stack>
     ) : <p>loading........</p>
 }
