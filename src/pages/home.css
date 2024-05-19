@@ -1,0 +1,34 @@
+main.homepage section {
+    padding: 0 1rem;
+    /* max-width: 1100px; */
+    margin: auto;
+    margin-bottom: 2rem;
+}
+
+main.homepage section.carousel {
+    margin-bottom: 0;
+}
+
+main.homepage section.small {
+    max-width: 600px;
+}
+
+main.homepage section h1 {
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 1rem;
+}
+
+.row {
+    display: flex;
+    overflow-x: scroll;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    /* width: calc(100% - 1rem); */
+}
+
+.row .container {
+    flex: 1 0 auto;
+    width: 15rem;
+    aspect-ratio: 2;
+}
