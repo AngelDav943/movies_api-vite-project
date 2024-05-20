@@ -1,0 +1,69 @@
+.itemScroller {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.itemScroller button.scroll {
+    --border-radius: 100%;
+    --margin-offset: -2.65rem;
+
+    appearance: unset;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.8rem 0.5rem;
+    color: white;
+    
+    font-size: clamp(10px, 5vmin, 2rem);
+    font-weight: 400;
+    width: clamp(1rem, 10vmin, 5rem);
+
+    z-index: 2;
+    transition: transform .4s, opacity .3s;
+    transform: scaleY(2) scaleX(2);
+    /* display: none; */
+}
+
+.itemScroller button.scroll.hidden {
+    opacity: 0;
+    transform: scaleY(2) scaleX(0);
+}
+
+.itemScroller button.scroll:hover {
+    transform: scaleY(2.2) scaleX(2);
+}
+
+.itemScroller button.scroll.left {
+    padding-right: 1rem;
+    margin-right: var(--margin-offset);
+    transform-origin: left;
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.itemScroller button.scroll.right {
+    padding-left: 1rem;
+    margin-left: var(--margin-offset);
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    transform-origin: right;
+}
+
+.itemScroller .scroller{
+    display: flex;
+    overflow-x: hidden;
+    gap: 1rem;
+    padding-bottom: 1rem;
+
+	scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.itemScroller .scroller .container {
+    border-radius: 1rem;
+    scroll-snap-align: start;
+    flex: 1 0 auto;
+    width: clamp(6rem, calc((100vmin - 5rem) / 3), 30rem);
+    aspect-ratio: 1;
+}

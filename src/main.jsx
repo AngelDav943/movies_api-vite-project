@@ -9,14 +9,18 @@ import mainTheme from './theme/index.jsx'
 import Header from './components/Header.jsx'
 // import './index.css'
 
+import { InfoProvider } from './context/useInfo.jsx'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={mainTheme}>
       <CssBaseline />
-      <BrowserRouter>
-        <Header />
-        <App />
-      </BrowserRouter>
+      <InfoProvider>
+        <BrowserRouter>
+          {/* <Header /> */}
+          <App />
+        </BrowserRouter>
+      </InfoProvider>
     </ThemeProvider>
   </React.StrictMode>,
 )

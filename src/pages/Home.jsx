@@ -1,67 +1,113 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Carousel from '../components/Carousel'
 
-import './home.css'
-
-
 import MoviePoster from "../components/MoviePoster";
-import axios from 'axios';
-import SearchInput from '../components/SearchInput';
 
-// https://image.tmdb.org/t/p/w500/
-const API_KEY = import.meta.env["VITE_API_KEY"];
+import { SearchDiv, SearchIconWrapper, StyledInputBase } from '../components/SearchInput';
+import { useInfo } from '../context/useInfo';
+
+
+import { Skeleton, TextField, InputAdornment } from '@mui/material'
+import { Search, Send } from '@mui/icons-material';
+
+import ItemScroller from '../components/ItemScroller';
+
+import { useNavigate } from 'react-router-dom';
+
+import './home.css'
+import MovieCard from '../components/MovieCard';
 
 export default function () {
+    const navigate = useNavigate();
 
-    const [movies, setMovies] = useState([]);
-    const [viewingPage, setPage] = useState(0);
+    const SkeletonArray = Array.from(Array(16).keys()).map(index => (
+        <Skeleton variant='rectangular' height='100%' width="100%" />
+    ))
+
+    const { fetchWeb } = useInfo();
+
+    const [inTheaters, setInTheaters] = useState([]);
+    const [topRated, setTopRated] = useState([]);
+
+    const searchRef = useRef();
+
     const [items, setItems] = useState([])
 
-    const [searchValue, setSearchValue] = useState("")
-
     async function fetchMovies() {
-        try {
-            const fetchPage = Math.min(500, Math.max(1, viewingPage))
-            const discoverResponse = (await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&include_adult=false&page=3`))
-            const currentlyResponse = (await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&include_adult=false&page=1`))
 
-            if (discoverResponse.data && discoverResponse.data["results"] != null) {
-                const data = discoverResponse.data["results"]
-                setItems(data.map(movie => {
-                    return <MoviePoster movie={movie} onHover={() => setSearchValue(movie.title)}/>
-                }))
-            }
+        setItems(Array.from(Array(16).keys()).map(index => (
+            <Skeleton variant='rectangular' key={index} height='150%' />
+        )))
 
-            if (currentlyResponse.data && currentlyResponse.data["results"] != null) {
-                const data = discoverResponse.data["results"]
-                console.log(data)
-                setMovies(data)
-            }
+        const discover = await fetchWeb('/discover/movie?include_adult=false&page=1')
+        const in_theaters = await fetchWeb('/movie/now_playing?include_adult=false')
+        const top_rated = await fetchWeb('/movie/top_rated?include_adult=false')
 
-        } catch (err) {
-
+        if (top_rated && top_rated["results"] != null) {
+            const data = top_rated["results"]
+            setTopRated(top_rated["results"])
+            setItems(data.map((movie, index) => {
+                return <MoviePoster key={index} movie={movie} onHover={() => {
+                    if (searchRef.current.querySelector('input')) {
+                        setSearchValue(movie.title)
+                        searchRef.current.querySelector('input').value = movie.title
+                    }
+                }} />
+            }))
         }
+
+
+        if (in_theaters && in_theaters["results"] != null) {
+            setInTheaters(in_theaters["results"])
+        }
+
     }
 
     useEffect(() => {
         fetchMovies()
     }, [])
 
+    const [searchValue, setSearchValue] = useState("");
+    function onKeyPress(event) {
+        setSearchValue(event.target.value)
+        if (event.keyCode == 13) startSearch()
+    }
+
+    function startSearch() {
+        if (searchValue.replace(/ /g, "") != "") navigate(`/search/${searchValue}`, { replace: true })
+    }
+
     return <main className='homepage'>
         <Carousel items={items} />
         <section className='small'>
-            <SearchInput value={searchValue} onInput={({target}) => setSearchValue(target.value)}/>
+            <SearchDiv >
+                <SearchIconWrapper>
+                    <Search />
+                </SearchIconWrapper>
+                {searchValue != "" && <SearchIconWrapper float='right' pointer={true} onClick={e => startSearch()}>
+                    <Send />
+                </SearchIconWrapper>}
+                <StyledInputBase
+                    onKeyDown={e => onKeyPress(e)}
+                    ref={searchRef}
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                />
+            </SearchDiv>
         </section>
+
+        <section>
+            <h1>Top rated</h1>
+            <ItemScroller items={topRated.length != 0 ? topRated.map((movie, index) => (
+                <MovieCard movie={movie} key={index} />
+            )) : SkeletonArray} />
+        </section>
+
         <section>
             <h1>Currently in theaters</h1>
-            <div className="row">
-                {movies && movies.map((movie, index) => (
-                    <div className="container" key={index}>
-                        <MoviePoster movie={movie} />
-                    </div>
-                ))}
-            </div>
+            <ItemScroller items={inTheaters.length != 0 ? inTheaters.map((movie, index) => (
+                <MovieCard movie={movie} key={index} />
+            )) : SkeletonArray} />
         </section>
-        {/* {movies != null ? <MoviePoster movie={movies[0]} /> : ''} */}
     </main>
 }

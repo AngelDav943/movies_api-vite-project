@@ -10,6 +10,8 @@ const API_KEY = import.meta.env["VITE_API_KEY"];
 
 export function InfoProvider({ children }) {
 
+    const [movieGenres, setGenres] = useState(null);
+
     const exportUtils = {
         fetchWeb: async (path = "/", init = null) => {
             init = init || { method: "GET", headers: null, data: null }
@@ -31,6 +33,7 @@ export function InfoProvider({ children }) {
                 })
 
                 const response = await fetchedData.json();
+                
                 /*if (response["msg"]) {
                     setErrorMessage(response["msg"])
                     return null;
@@ -38,12 +41,23 @@ export function InfoProvider({ children }) {
 
                 return response;
             } catch (error) {
-                setErrorMessage(`${String(error)}; client error`)
+                console.error('client error:', error)
+                // setErrorMessage(`${String(error)}; client error`)
             }
 
             return null;
         },
+        movieGenres
     }
+
+    async function getGenres() {
+        const genrelist = await exportUtils.fetchWeb(`/genre/movie/list?`)
+        if (genrelist && genrelist["genres"]) setGenres(genrelist["genres"])
+    }
+
+    useEffect(() => {
+        if (movieGenres == null) getGenres();
+    }, [])
 
     return (
         <infoContext.Provider value={{ ...exportUtils }}>

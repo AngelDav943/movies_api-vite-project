@@ -14,8 +14,7 @@ export default function () {
     const [loaded, setLoaded] = useState(false);
 
     const [movies, setMovies] = useState(null);
-    const [viewingPage, setPage] = useState(2);
-    const [items, setItems] = useState([])
+    const [viewingPage, setPage] = useState(1);
 
     async function fetchMovies() {
         setLoaded(false)
@@ -27,14 +26,8 @@ export default function () {
             if (response.data && response.data["results"] != null) {
                 const data = response.data["results"]
                 setMovies(data)
-                setItems(data.map(movie => {
-                    return <MoviePoster movie={movie} />
-                }))
             }
-
-            setTimeout(() => {
-                setLoaded(true)
-            }, 600)
+            setLoaded(true)
         } catch (err) {
 
         }
@@ -48,7 +41,6 @@ export default function () {
 
     return (
         <>
-            <Carousel items={items}/>
             <Grid container>
                 {movies != null && loaded ? movies.map(movie => (
                     <Grid item xs={2} sm={4} md={3} xl={2} key={movie.id}>

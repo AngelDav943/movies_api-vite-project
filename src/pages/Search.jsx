@@ -1,47 +1,90 @@
-import axios from "axios"
 import { useEffect, useState } from "react";
 
-import { Typography, Button, TextField, Box, Stack, Skeleton, CardActionArea, CardMedia } from '@mui/material'
-import { useParams } from "react-router-dom";
-import MoviePoster from "../components/MoviePoster";
+import { Typography, Button, TextField, Box, Stack, CircularProgress } from '@mui/material'
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useInfo } from "../context/useInfo";
 
-// https://image.tmdb.org/t/p/w500/
-const API_KEY = import.meta.env["VITE_API_KEY"];
+import MovieBackdrop from "../components/MovieBackdrop";
+import { SearchDiv, SearchIconWrapper, StyledInputBase } from '../components/SearchInput';
+import { Search, Send } from '@mui/icons-material';
 
-export default function() {
+import './search.css'
+
+export default function () {
     const params = useParams();
+    const { fetchWeb } = useInfo();
 
+    const [loaded, setLoaded] = useState(false);
     const [movies, setMovies] = useState(null);
     const [viewingPage, setPage] = useState(1);
 
     async function fetchMovies() {
-        const query = params["query"];
+        let query = params["query"];
+        if (searchValue.replace(/ /g, "") != "") query = searchValue
+        // console.log(params)
         if (query == undefined) return;
 
-        try {
-            const fetchPage = Math.min(500, Math.max(1, viewingPage))
-            const response = (await axios.get(`https://api.themoviedb.org/3/search/movie?query=${query}&api_key=${API_KEY}&include_adult=false&page=${fetchPage}`))
-            console.log(response.data)
-            if (response.data && response.data["results"] != null) setMovies(response.data["results"])
+        const fetchPage = Math.min(500, Math.max(1, viewingPage))
+        const response = await fetchWeb(`/search/movie?query=${query}&page${fetchPage}&include_adult=false`)
 
-        } catch (err) {
-            console.log("error!",err)
+        if (response && response["results"] != null) setMovies(response["results"])
+        setLoaded(true)
+    }
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [searchValue, setSearchValue] = useState("");
+    function onKeyPress(event) {
+        setSearchValue(event.target.value)
+        if (event.keyCode == 13) startSearch()
+    }
+
+    function startSearch() {
+        if (searchValue.replace(/ /g, "") != "") navigate(`/search/${searchValue}`, { replace: true })
+    }
+
+    function goBack() {
+        if (location.state && location.state["last"]) {
+            navigate(location.state["last"])
+            return;
         }
+
+        navigate('/')
     }
 
     useEffect(() => {
         fetchMovies()
-    }, [])
-
-    //https://image.tmdb.org/t/p/w500/
+    }, [searchValue])
 
     return (
-        <>
-            <Stack direction='row' overflow='clip'>
-                {movies != null ? movies.map(movie => (
-                    <MoviePoster movie={movie} key={movie.id}/>
-                )) : <Skeleton />}
-            </Stack>
-        </>
+        <main className="searchPage">
+            <div className="links">
+                <a onClick={() => goBack()} className="back">&lt; Go back</a>
+                <Link to='/' >Home</Link>
+                <SearchDiv sx={{ flexGrow: 1 }}>
+                    <SearchIconWrapper>
+                        <Search />
+                    </SearchIconWrapper>
+                    {searchValue != "" && <SearchIconWrapper float='right' pointer={true} onClick={e => startSearch()}>
+                        <Send />
+                    </SearchIconWrapper>}
+                    <StyledInputBase
+                        onKeyUp={e => onKeyPress(e)}
+                        // ref={searchRef}
+                        placeholder="Search…"
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                </SearchDiv>
+            </div>
+            <div className="movies">
+                {movies != null && loaded ? movies.map(movie => (
+                    <MovieBackdrop key={movie.id} movie={movie} />
+                )) : <Stack height="80vh" alignItems="center" justifyContent="center" width="100%">
+                    <CircularProgress sx={{ zoom: 3 }} />
+                </Stack>}
+            </div>
+        </main>
     )
 }
+

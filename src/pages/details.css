@@ -2,16 +2,48 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    min-height: 500px;
+    min-height: 100dvh;
+    /* height: 100dvh; */
+}
+
+.moviedetails .links {
+    display: flex;
+    gap: 1rem;
+}
+
+.moviedetails a {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: fit-content;
+    border-radius: 0.4rem;
+    padding: 0.5rem 1rem;
+}
+
+.moviedetails:has(.back:hover) .backdrop {
+    backdrop-filter: blur(20px) grayscale(0.9);
+}
+
+.moviedetails:has(.back:hover) .info {
+    filter: grayscale(0.5);
+    transform: scale(0.9) rotateX(5deg);
+}
+
+.moviedetails .info {
+    transition: transform 1s, filter .9s;
 }
 
 .moviedetails .backdrop {
-    min-height: 90dvh;
+    perspective: 400px;
+    min-height: 100dvh;
     padding: 2rem;
     backdrop-filter: blur(10px);
+    transition: backdrop-filter 1s;
 }
 
 .moviedetails .poster {
+    border-radius: 1rem;
     max-height: 400px;
     height: 100dvw;
     margin: 2rem;

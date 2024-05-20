@@ -5,6 +5,8 @@ import Search from './pages/Search'
 import Details from './pages/Details'
 import Home from './pages/Home'
 
+import './index.css'
+
 function App() {
   return <>
     <Routes>

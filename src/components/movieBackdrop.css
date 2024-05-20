@@ -1,0 +1,70 @@
+.moviebackdrop {
+    --border-radius: .5rem;
+    overflow: hidden;
+    height: 16rem;
+    width: 27rem;
+    /* width: calc((100% / 3) - 1rem); */
+    transition: transform .3s;
+    border-radius: var(--border-radius);
+}
+
+.moviebackdrop .backdrop {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.moviebackdrop .info {
+    cursor: pointer;
+    position: relative;
+    background-color: #16171e;
+    width: calc(100% + 2px);
+    margin-left: -1px;
+    margin-top: -.4rem;
+    padding: 0.5rem 1rem;
+    
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+    
+    overflow: hidden;
+    padding-bottom: 2rem;
+
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: margin 1s, transform .5s 0.5s;
+}
+
+.moviebackdrop .info span.genre {
+    padding: 0.1rem 0.5rem;
+    margin: 0.3rem;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.moviebackdrop:hover .info {
+    transition: transform .5s, margin 0.5s .25s;
+    z-index: 1;
+    margin-top: -5rem;
+    transform: scaleY(1);
+}
+
+.moviebackdrop:hover {
+    overflow: visible;
+    z-index: 2;
+    transform: scale(1.1);
+}
+
+@media (hover: none),(-moz-touch-enabled: 1), (pointer:coarse) {
+    .moviebackdrop {
+        overflow: visible;
+        margin-bottom: 3rem;
+    }
+
+    .moviebackdrop .info {
+        transition: none;
+        z-index: 1;
+        margin-top: -5rem;
+        transform: scaleY(1);
+    }
+}
