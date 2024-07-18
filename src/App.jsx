@@ -1,4 +1,3 @@
-import React from 'react'
 import { Routes, Route } from "react-router-dom"
 import Browse from './pages/Browse'
 import Search from './pages/Search'
